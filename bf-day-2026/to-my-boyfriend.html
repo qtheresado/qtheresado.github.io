@@ -217,7 +217,7 @@
 
     let heartsStarted = false;
 
-    music.volume = 0.7;
+    music.volume = 0.5;
 
     // ── Click Handler ──
     intro.addEventListener('click', () => {
@@ -231,7 +231,7 @@
 
         music.volume = 0;
         music.play().then(() => {
-          fadeInMusic(0.7, 2000);
+          fadeInMusic(0.5, 2000);
         }).catch(() => {
           // Autoplay blocked — user can press play icon manually
           pauseIcon.style.display = 'none';
