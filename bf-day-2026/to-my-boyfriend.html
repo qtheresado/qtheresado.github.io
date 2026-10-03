@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Heart Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      overflow: hidden;
+      transition: background-color 1s ease;
+    }
+
+    body.revealed {
+      background-color: #ffecec;
+    }
+
+    /* ── INTRO SCREEN ── */
+    #intro {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: opacity 1s ease;
+    }
+
+    #intro.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .heart-icon {
+      width: 120px;
+      height: 120px;
+      animation: heartbeat 1.2s ease-in-out infinite;
+    }
+
+    .click-label {
+      margin-top: 16px;
+      font-size: 1.4rem;
+      font-family: Georgia, serif;
+      color: #e66767;
+      letter-spacing: 0.05em;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      14%       { transform: scale(1.15); }
+      28%       { transform: scale(1); }
+      42%       { transform: scale(1.1); }
+      56%       { transform: scale(1); }
+    }
+
+    /* ── REVEAL SCREEN ── */
+    #reveal {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 1.2s ease 0.6s;
+      pointer-events: none;
+    }
+
+    #reveal.fade-in {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ── IMAGE GLOW WRAPPER ── */
+    .image-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-wrapper::before {
+      content: '';
+      position: absolute;
+      width: 110%;
+      height: 110%;
+      border-radius: 24px;
+      background: radial-gradient(ellipse at center, rgba(230, 103, 103, 0.45) 0%, rgba(255, 182, 182, 0.2) 50%, transparent 75%);
+      filter: blur(24px);
+      z-index: 0;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.05); }
+    }
+
+    #reveal img {
+      position: relative;
+      z-index: 1;
+      max-width: 80vw;
+      max-height: 75vh;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(230, 103, 103, 0.25);
+      object-fit: contain;
+    }
+
+    /* ── FLOATING HEARTS ── */
+    .floating-heart {
+      position: fixed;
+      bottom: -60px;
+      font-size: 1.6rem;
+      color: #e66767;
+      opacity: 0;
+      animation: floatUp linear infinite;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.8; }
+      80%  { opacity: 0.5; }
+      100% { transform: translateY(-110vh) scale(0.6) rotate(20deg); opacity: 0; }
+    }
+
+    /* ── PLAY / PAUSE BUTTON ── */
+    #play-pause-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease 1.6s, transform 0.8s ease 1.6s;
+      pointer-events: none;
+      z-index: 100;
+      padding: 4px;
+    }
+
+    #play-pause-btn.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    #play-pause-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: #e66767;
+      transition: fill 0.2s ease, transform 0.2s ease;
+    }
+
+    #play-pause-btn:hover svg {
+      fill: #d45555;
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Intro Heart -->
+  <div id="intro">
+    <svg class="heart-icon" viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#e66767"
+        d="M50 85
+           C50 85 5 55 5 28
+           C5 14 16 5 28 5
+           C36 5 44 10 50 18
+           C56 10 64 5 72 5
+           C84 5 95 14 95 28
+           C95 55 50 85 50 85Z"/>
+    </svg>
+    <p class="click-label">click me</p>
+  </div>
+
+  <!-- Reveal Image -->
+  <div id="reveal">
+    <div class="image-wrapper">
+      <!-- 🔁 Replace "your-image.jpg" with your actual image file name -->
+      <img src="your-image.jpg" alt="Surprise" />
+    </div>
+  </div>
+
+  <!-- Play / Pause Icon -->
+  <button id="play-pause-btn" aria-label="Play or pause music">
+    <svg id="pause-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="3" width="4" height="18" rx="1"/>
+      <rect x="15" y="3" width="4" height="18" rx="1"/>
+    </svg>
+    <svg id="play-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+      <polygon points="5,3 19,12 5,21"/>
+    </svg>
+  </button>
+
+  <!-- 🔁 Replace "your-song.mp3" with your actual audio file name -->
+  <audio id="bg-music" loop>
+    <source src="your-song.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    const intro        = document.getElementById('intro');
+    const reveal       = document.getElementById('reveal');
+    const body         = document.body;
+    const music        = document.getElementById('bg-music');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const pauseIcon    = document.getElementById('pause-icon');
+    const playIcon     = document.getElementById('play-icon');
+
+    let heartsStarted = false;
+
+    music.volume = 0.7;
+
+    // ── Click Handler ──
+    intro.addEventListener('click', () => {
+      intro.classList.add('fade-out');
+
+      setTimeout(() => {
+        intro.style.display = 'none';
+        body.classList.add('revealed');
+        reveal.classList.add('fade-in');
+        playPauseBtn.classList.add('visible');
+
+        music.volume = 0;
+        music.play().then(() => {
+          fadeInMusic(0.7, 2000);
+        }).catch(() => {
+          // Autoplay blocked — user can press play icon manually
+          pauseIcon.style.display = 'none';
+          playIcon.style.display  = '';
+        });
+
+        if (!heartsStarted) {
+          heartsStarted = true;
+          startFloatingHearts();
+        }
+      }, 1000);
+    });
+
+    // ── Fade Music In ──
+    function fadeInMusic(targetVol, duration) {
+      const steps     = 40;
+      const interval  = duration / steps;
+      const increment = targetVol / steps;
+      let current     = 0;
+
+      const timer = setInterval(() => {
+        current = Math.min(current + increment, targetVol);
+        music.volume = current;
+        if (current >= targetVol) clearInterval(timer);
+      }, interval);
+    }
+
+    // ── Play / Pause Toggle ──
+    playPauseBtn.addEventListener('click', () => {
+      if (music.paused) {
+        music.play();
+        pauseIcon.style.display = '';
+        playIcon.style.display  = 'none';
+      } else {
+        music.pause();
+        pauseIcon.style.display = 'none';
+        playIcon.style.display  = '';
+      }
+    });
+
+    // ── Floating Hearts ──
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('floating-heart');
+      heart.textContent = '♥';
+
+      const size     = Math.random() * 1.5 + 0.8;
+      const leftPos  = Math.random() * 100;
+      const duration = Math.random() * 6 + 6;
+      const delay    = Math.random() * 4;
+
+      heart.style.fontSize          = `${size}rem`;
+      heart.style.left              = `${leftPos}vw`;
+      heart.style.animationDuration = `${duration}s`;
+      heart.style.animationDelay    = `${delay}s`;
+
+      body.appendChild(heart);
+      setTimeout(() => heart.remove(), (duration + delay) * 1000);
+    }
+
+    function startFloatingHearts() {
+      for (let i = 0; i < 12; i++) createHeart();
+      setInterval(() => createHeart(), 700);
+    }
+  </script>
+
+</body>
+</html>
