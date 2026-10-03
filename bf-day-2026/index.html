@@ -485,18 +485,19 @@
       if (e.key === 'Escape') lightbox.classList.remove('open');
     });
 
-    // ── Flip on Click ──
-    flipPhoto.addEventListener('click', () => {
-      if (flipPhoto.classList.contains('flipping')) return;
-      flipPhoto.classList.add('flipping');
-      flipPhoto.addEventListener('animationend', () => {
-        flipPhoto.classList.remove('flipping');
-        flipPhoto.style.animation = 'none';
-        flipPhoto.offsetHeight;
-        flipPhoto.style.animation = 'glowDropPulse 3s ease-in-out infinite';
-        spawnGlitter();
-      }, { once: true });
-    });
+// ── Flip on Click ──
+flipPhoto.addEventListener('click', () => {
+  flipPhoto.classList.remove('flipping');
+  flipPhoto.offsetHeight; // reflow to restart animation
+  flipPhoto.classList.add('flipping');
+  flipPhoto.addEventListener('animationend', () => {
+    flipPhoto.classList.remove('flipping');
+    flipPhoto.style.animation = 'none';
+    flipPhoto.offsetHeight;
+    flipPhoto.style.animation = 'glowDropPulse 3s ease-in-out infinite';
+    spawnGlitter();
+  }, { once: true });
+});
 
     // ── Glitter Explosion ──
     function spawnGlitter() {
