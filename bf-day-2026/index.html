@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>♡ National Boyfriend Day 2026 ♡</title>
+
+  <!-- Pink Arrow, Bow Tie Hearts Blinking, Letter J - https://www.cursors-4u.com/cursor/pink-arrow-bow-tie-hearts-blinking-letter-j -->
+<link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/pink-arrow-bow-tie-hearts-blinking-letter-j-40155f07-32.css">
+<!-- End www.Cursors-4U.com Code -->
+  
   <style>
     * {
       margin: 0;
@@ -23,6 +28,7 @@
 
     body.revealed {
       background-color: #ffecec;
+      overflow-y: auto;
     }
 
     /* ── INTRO SCREEN ── */
@@ -31,7 +37,6 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       transition: opacity 1s ease;
     }
 
@@ -65,9 +70,15 @@
     /* ── REVEAL SCREEN ── */
     #reveal {
       position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      padding: 60px 20px 100px;
+      gap: 48px;
       opacity: 0;
       transition: opacity 1.2s ease 0.6s;
       pointer-events: none;
@@ -103,7 +114,7 @@
       50%       { opacity: 1;   transform: scale(1.05); }
     }
 
-    #reveal img {
+    .image-wrapper img {
       position: relative;
       z-index: 1;
       max-width: 80vw;
@@ -111,6 +122,46 @@
       border-radius: 16px;
       box-shadow: 0 8px 32px rgba(230, 103, 103, 0.25);
       object-fit: contain;
+    }
+
+    /* ── FLIP IMAGE ── */
+    .flip-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flip-wrapper::before {
+      content: '';
+      position: absolute;
+      width: 110%;
+      height: 110%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(230, 103, 103, 0.45) 0%, rgba(255, 182, 182, 0.2) 50%, transparent 75%);
+      filter: blur(24px);
+      z-index: 0;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    #flip-photo {
+      position: relative;
+      z-index: 1;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 8px 32px rgba(230, 103, 103, 0.25);
+    }
+
+    #flip-photo.flipping {
+      animation: coinFlip 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    @keyframes coinFlip {
+      0%   { transform: perspective(600px) rotateY(0deg) scale(1); }
+      40%  { transform: perspective(600px) rotateY(200deg) scale(1.08); }
+      100% { transform: perspective(600px) rotateY(360deg) scale(1); }
     }
 
     /* ── FLOATING HEARTS ── */
@@ -138,7 +189,6 @@
       right: 24px;
       background: none;
       border: none;
-      cursor: pointer;
       opacity: 0;
       transform: translateY(10px);
       transition: opacity 0.8s ease 1.6s, transform 0.8s ease 1.6s;
@@ -183,11 +233,19 @@
     <p class="click-label">click me</p>
   </div>
 
-  <!-- Reveal Image -->
+  <!-- Reveal Screen -->
   <div id="reveal">
+
+    <!-- Main Image -->
     <div class="image-wrapper">
       <img src="2026NationalBoyfriendDayCard.png" alt="Surprise" />
     </div>
+
+    <!-- Flip Image -->
+    <div class="flip-wrapper" title="Click me!">
+      <img id="flip-photo" src="goat.jpeg" alt="Flip me" />
+    </div>
+
   </div>
 
   <!-- Play / Pause Icon -->
@@ -201,7 +259,6 @@
     </svg>
   </button>
 
-
   <audio id="bg-music" loop>
     <source src="EVERYTHING-TheBlackSkirts-MusicBox.mp3" type="audio/mpeg" />
   </audio>
@@ -214,9 +271,9 @@
     const playPauseBtn = document.getElementById('play-pause-btn');
     const pauseIcon    = document.getElementById('pause-icon');
     const playIcon     = document.getElementById('play-icon');
+    const flipPhoto    = document.getElementById('flip-photo');
 
     let heartsStarted = false;
-
     music.volume = 0.5;
 
     // ── Click Handler ──
@@ -233,7 +290,6 @@
         music.play().then(() => {
           fadeInMusic(0.5, 2000);
         }).catch(() => {
-          // Autoplay blocked — user can press play icon manually
           pauseIcon.style.display = 'none';
           playIcon.style.display  = '';
         });
@@ -270,6 +326,15 @@
         pauseIcon.style.display = 'none';
         playIcon.style.display  = '';
       }
+    });
+
+    // ── Flip on Click ──
+    flipPhoto.addEventListener('click', () => {
+      if (flipPhoto.classList.contains('flipping')) return;
+      flipPhoto.classList.add('flipping');
+      flipPhoto.addEventListener('animationend', () => {
+        flipPhoto.classList.remove('flipping');
+      }, { once: true });
     });
 
     // ── Floating Hearts ──
