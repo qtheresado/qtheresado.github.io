@@ -486,17 +486,25 @@
     });
 
 // ── Flip on Click ──
+let flipTimeout = null;
+
 flipPhoto.addEventListener('click', () => {
+  // If already flipping, ignore the click
+  if (flipTimeout) return;
+
   flipPhoto.classList.remove('flipping');
-  flipPhoto.offsetHeight; // reflow to restart animation
+  flipPhoto.style.animation = 'none';
+  flipPhoto.offsetHeight;
   flipPhoto.classList.add('flipping');
-  flipPhoto.addEventListener('animationend', () => {
+
+  flipTimeout = setTimeout(() => {
     flipPhoto.classList.remove('flipping');
     flipPhoto.style.animation = 'none';
     flipPhoto.offsetHeight;
     flipPhoto.style.animation = 'glowDropPulse 3s ease-in-out infinite';
     spawnGlitter();
-  });
+    flipTimeout = null; 
+  }, 1200);
 });
 
     // ── Glitter Explosion ──
