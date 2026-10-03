@@ -72,10 +72,10 @@
       right: 0;
       bottom: 0;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
-      gap: 32px;
+      gap: 40px;
       padding: 24px;
       opacity: 0;
       transition: opacity 1.2s ease 0.6s;
@@ -116,8 +116,8 @@
     .image-wrapper img {
       position: relative;
       z-index: 1;
-      max-width: 75vw;
-      max-height: 38vh;
+      max-width: 42vw;
+      max-height: 80vh;
       border-radius: 16px;
       box-shadow: 0 8px 32px rgba(230, 103, 103, 0.25);
       object-fit: contain;
@@ -210,8 +210,8 @@
     #flip-photo {
       position: relative;
       z-index: 1;
-      max-width: 75vw;
-      max-height: 38vh;
+      max-width: 42vw;
+      max-height: 80vh;
       object-fit: contain;
       animation: glowDropPulse 3s ease-in-out infinite;
     }
@@ -337,6 +337,20 @@
       fill: #d45555;
       transform: scale(1.2);
     }
+
+    /* ── RESPONSIVE: stack on small screens ── */
+    @media (max-width: 600px) {
+      #reveal {
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .image-wrapper img,
+      #flip-photo {
+        max-width: 80vw;
+        max-height: 38vh;
+      }
+    }
   </style>
 </head>
 <body>
@@ -358,11 +372,11 @@
 
   <!-- Reveal Screen -->
   <div id="reveal">
-    <!-- Main Image -->
+    <!-- Main Image (left) -->
     <div class="image-wrapper">
       <img id="card-img" src="2026NationalBoyfriendDayCard.png" alt="Surprise" />
     </div>
-    <!-- Flip Image -->
+    <!-- Flip Image (right) -->
     <div class="flip-wrapper">
       <img id="flip-photo" src="goat.png" alt="Flip me" />
     </div>
@@ -480,39 +494,31 @@
       if (e.key === 'Escape') lightbox.classList.remove('open');
     });
 
-// ── Flip on Click — unlimited, no glitter, resets cleanly ──
+    // ── Flip on Click ──
     flipPhoto.addEventListener('click', () => {
       if (isFlipping) return;
       isFlipping = true;
 
       flipPhoto.classList.remove('flipping');
       flipPhoto.style.animation = 'none';
-      flipPhoto.offsetHeight; // reflow
-      
-      // Clear the inline style so the .flipping CSS class can apply
-      flipPhoto.style.animation = ''; 
+      flipPhoto.offsetHeight;
+      flipPhoto.style.animation = '';
       flipPhoto.classList.add('flipping');
 
       setTimeout(() => {
         flipPhoto.classList.remove('flipping');
         flipPhoto.style.animation = 'none';
         flipPhoto.offsetHeight;
-        
-        // Clear the inline style again to seamlessly return to your default CSS glowDropPulse animation
-        flipPhoto.style.animation = ''; 
-        isFlipping = false; // unlock for next click
+        flipPhoto.style.animation = '';
+        isFlipping = false;
       }, 1200);
     });
-    
+
     // ── Global Click / Touch → Spawn Stars ──
-    // Fires on every click/tap anywhere on the page after reveal
     function handleInteraction(e) {
       if (!pageRevealed) return;
-
-      // Use touch coordinates on mobile, mouse on desktop
       const x = e.touches ? e.touches[0].clientX : e.clientX;
       const y = e.touches ? e.touches[0].clientY : e.clientY;
-
       spawnStars(x, y);
     }
 
@@ -522,7 +528,6 @@
     // ── Spawn Stars at (x, y) ──
     function spawnStars(originX, originY) {
       const count = 18;
-
       for (let i = 0; i < count; i++) {
         const particle = document.createElement('div');
         particle.classList.add('glitter');
