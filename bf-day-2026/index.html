@@ -4,11 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>♡ National Boyfriend Day 2026 ♡</title>
-
   <!-- Pink Arrow, Bow Tie Hearts Blinking, Letter J - https://www.cursors-4u.com/cursor/pink-arrow-bow-tie-hearts-blinking-letter-j -->
-<link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/pink-arrow-bow-tie-hearts-blinking-letter-j-40155f07-32.css">
-<!-- End www.Cursors-4U.com Code -->
-  
+  <link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/pink-arrow-bow-tie-hearts-blinking-letter-j-40155f07-32.css">
+  <!-- End www.Cursors-4U.com Code -->
+
   <style>
     * {
       margin: 0;
@@ -134,7 +133,6 @@
       flex-shrink: 0;
     }
 
-    /* Glow that follows the PNG shape using drop-shadow filter */
     .flip-wrapper::before {
       content: '';
       position: absolute;
@@ -150,8 +148,6 @@
       max-width: 75vw;
       max-height: 38vh;
       object-fit: contain;
-      filter: drop-shadow(0 0 18px rgba(230, 103, 103, 0.55))
-              drop-shadow(0 0 36px rgba(255, 182, 182, 0.35));
       animation: glowDropPulse 3s ease-in-out infinite;
     }
 
@@ -166,14 +162,54 @@
       }
     }
 
+    /* ── COIN FLIP ANIMATION ── */
     #flip-photo.flipping {
-      animation: coinFlip 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation: coinFlip 1s cubic-bezier(0.42, 0, 0.58, 1) forwards;
     }
 
     @keyframes coinFlip {
-      0%   { transform: perspective(600px) rotateY(0deg) scale(1); }
-      40%  { transform: perspective(600px) rotateY(200deg) scale(1.08); }
-      100% { transform: perspective(600px) rotateY(360deg) scale(1); }
+      0%   { transform: perspective(600px) rotateY(0deg); }
+      10%  { transform: perspective(600px) rotateY(540deg); }
+      20%  { transform: perspective(600px) rotateY(1080deg); }
+      35%  { transform: perspective(600px) rotateY(1620deg); }
+      55%  { transform: perspective(600px) rotateY(2060deg); }
+      72%  { transform: perspective(600px) rotateY(2340deg); }
+      86%  { transform: perspective(600px) rotateY(2480deg); }
+      94%  { transform: perspective(600px) rotateY(2520deg); }
+      100% { transform: perspective(600px) rotateY(2520deg); }
+    }
+
+    /* ── GLITTER PARTICLES ── */
+    .glitter {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      animation: glitterFly var(--dur) ease-out forwards;
+    }
+
+    .glitter::before {
+      content: '★';
+      position: absolute;
+      font-size: 10px;
+      color: #FFFCF0;
+      text-shadow:
+        0 0 4px #FFFCF0,
+        0 0 10px rgba(255, 252, 240, 0.8),
+        0 0 20px rgba(255, 252, 240, 0.5);
+      animation: starTwinkle var(--dur) ease-out forwards;
+    }
+
+    @keyframes glitterFly {
+      0%   { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      25%  { opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
+    }
+
+    @keyframes starTwinkle {
+      0%   { transform: scale(0.6); }
+      15%  { transform: scale(1.3); }
+      50%  { transform: scale(1); }
+      100% { transform: scale(0.2); }
     }
 
     /* ── FLOATING HEARTS ── */
@@ -346,12 +382,53 @@
       flipPhoto.classList.add('flipping');
       flipPhoto.addEventListener('animationend', () => {
         flipPhoto.classList.remove('flipping');
-        // restore glow pulse after flip
         flipPhoto.style.animation = 'none';
-        flipPhoto.offsetHeight; // reflow
+        flipPhoto.offsetHeight;
         flipPhoto.style.animation = '';
+        spawnGlitter();
       }, { once: true });
     });
+
+    // ── Glitter Explosion ──
+    function spawnGlitter() {
+      const rect    = flipPhoto.getBoundingClientRect();
+      const originX = rect.left + rect.width  / 2;
+      const originY = rect.top  + rect.height / 2;
+
+      const count = 70;
+
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('glitter');
+
+        // Full 360 explosion outward with strong distance
+        const angle    = Math.random() * 360;
+        const distance = Math.random() * 350 + 150;  // 150–500px outward
+        const gravity  = Math.random() * 200 + 100;  // gentle downward drift
+
+        const tx  = Math.cos(angle * Math.PI / 180) * distance;
+        const ty  = Math.sin(angle * Math.PI / 180) * distance + gravity;
+
+        const dur   = (Math.random() * 1.0 + 1.2).toFixed(2); // 1.2–2.2s
+        const rot   = Math.random() * 540 - 270;
+        const delay = (Math.random() * 0.12).toFixed(2);
+
+        particle.style.cssText = `
+          left: ${originX}px;
+          top: ${originY}px;
+          width: 2px;
+          height: 2px;
+          --tx: ${tx}px;
+          --ty: ${ty}px;
+          --dur: ${dur}s;
+          --rot: ${rot}deg;
+          animation-delay: ${delay}s;
+        `;
+
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), (parseFloat(dur) + 0.3) * 1000);
+      }
+    }
 
     // ── Floating Hearts ──
     function createHeart() {
