@@ -480,7 +480,7 @@
       if (e.key === 'Escape') lightbox.classList.remove('open');
     });
 
-    // ── Flip on Click — unlimited, no glitter, resets cleanly ──
+// ── Flip on Click — unlimited, no glitter, resets cleanly ──
     flipPhoto.addEventListener('click', () => {
       if (isFlipping) return;
       isFlipping = true;
@@ -488,17 +488,22 @@
       flipPhoto.classList.remove('flipping');
       flipPhoto.style.animation = 'none';
       flipPhoto.offsetHeight; // reflow
+      
+      // Clear the inline style so the .flipping CSS class can apply
+      flipPhoto.style.animation = ''; 
       flipPhoto.classList.add('flipping');
 
       setTimeout(() => {
         flipPhoto.classList.remove('flipping');
         flipPhoto.style.animation = 'none';
         flipPhoto.offsetHeight;
-        flipPhoto.style.animation = 'glowDropPulse 3s ease-in-out infinite';
+        
+        // Clear the inline style again to seamlessly return to your default CSS glowDropPulse animation
+        flipPhoto.style.animation = ''; 
         isFlipping = false; // unlock for next click
       }, 1200);
     });
-
+    
     // ── Global Click / Touch → Spawn Stars ──
     // Fires on every click/tap anywhere on the page after reveal
     function handleInteraction(e) {
