@@ -7,7 +7,6 @@
   <!-- Pink Arrow, Bow Tie Hearts Blinking, Letter J - https://www.cursors-4u.com/cursor/pink-arrow-bow-tie-hearts-blinking-letter-j -->
   <link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/pink-arrow-bow-tie-hearts-blinking-letter-j-40155f07-32.css">
   <!-- End www.Cursors-4U.com Code -->
-
   <style>
     * {
       margin: 0;
@@ -214,8 +213,6 @@
       max-width: 75vw;
       max-height: 38vh;
       object-fit: contain;
-      filter: drop-shadow(0 0 14px rgba(230, 103, 103, 0.5))
-              drop-shadow(0 0 28px rgba(255, 182, 182, 0.3));
       animation: glowDropPulse 3s ease-in-out infinite;
     }
 
@@ -361,17 +358,14 @@
 
   <!-- Reveal Screen -->
   <div id="reveal">
-
     <!-- Main Image -->
     <div class="image-wrapper">
       <img id="card-img" src="2026NationalBoyfriendDayCard.png" alt="Surprise" />
     </div>
-
     <!-- Flip Image -->
     <div class="flip-wrapper">
       <img id="flip-photo" src="goat.png" alt="Flip me" />
     </div>
-
   </div>
 
   <!-- Lightbox -->
@@ -396,31 +390,35 @@
   </audio>
 
   <script>
-    const intro        = document.getElementById('intro');
-    const reveal       = document.getElementById('reveal');
-    const body         = document.body;
-    const music        = document.getElementById('bg-music');
-    const playPauseBtn = document.getElementById('play-pause-btn');
-    const pauseIcon    = document.getElementById('pause-icon');
-    const playIcon     = document.getElementById('play-icon');
-    const flipPhoto    = document.getElementById('flip-photo');
-    const cardImg      = document.getElementById('card-img');
-    const lightbox     = document.getElementById('lightbox');
+    const intro         = document.getElementById('intro');
+    const reveal        = document.getElementById('reveal');
+    const body          = document.body;
+    const music         = document.getElementById('bg-music');
+    const playPauseBtn  = document.getElementById('play-pause-btn');
+    const pauseIcon     = document.getElementById('pause-icon');
+    const playIcon      = document.getElementById('play-icon');
+    const flipPhoto     = document.getElementById('flip-photo');
+    const cardImg       = document.getElementById('card-img');
+    const lightbox      = document.getElementById('lightbox');
     const lightboxClose = document.getElementById('lightbox-close');
 
     let heartsStarted = false;
+    let isFlipping    = false;
+    let pageRevealed  = false;
+
     music.volume = 0.3;
 
-    // ── Click Handler ──
+    // ── Intro Click Handler ──
     intro.addEventListener('click', () => {
       intro.classList.add('fade-out');
-
       setTimeout(() => {
         intro.style.display = 'none';
         body.classList.add('revealed');
         reveal.classList.add('fade-in');
         playPauseBtn.classList.add('visible');
+        pageRevealed = true;
 
+        music.load();
         music.volume = 0;
         music.play().then(() => {
           fadeInMusic(0.3, 2000);
@@ -442,7 +440,6 @@
       const interval  = duration / steps;
       const increment = targetVol / steps;
       let current     = 0;
-
       const timer = setInterval(() => {
         current = Math.min(current + increment, targetVol);
         music.volume = current;
@@ -468,52 +465,58 @@
       lightbox.classList.add('open');
     });
 
-    // ── Lightbox Close via X button ──
+    // ── Lightbox Close via X ──
     lightboxClose.addEventListener('click', () => {
       lightbox.classList.remove('open');
     });
 
-    // ── Lightbox Close via clicking backdrop ──
+    // ── Lightbox Close via backdrop ──
     lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) {
-        lightbox.classList.remove('open');
-      }
+      if (e.target === lightbox) lightbox.classList.remove('open');
     });
 
-    // ── Lightbox Close via Escape key ──
+    // ── Lightbox Close via Escape ──
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') lightbox.classList.remove('open');
     });
 
-// ── Flip on Click ──
-let flipTimeout = null;
+    // ── Flip on Click — unlimited, no glitter, resets cleanly ──
+    flipPhoto.addEventListener('click', () => {
+      if (isFlipping) return;
+      isFlipping = true;
 
-flipPhoto.addEventListener('click', () => {
-  // If already flipping, ignore the click
-  if (flipTimeout) return;
+      flipPhoto.classList.remove('flipping');
+      flipPhoto.style.animation = 'none';
+      flipPhoto.offsetHeight; // reflow
+      flipPhoto.classList.add('flipping');
 
-  flipPhoto.classList.remove('flipping');
-  flipPhoto.style.animation = 'none';
-  flipPhoto.offsetHeight;
-  flipPhoto.classList.add('flipping');
+      setTimeout(() => {
+        flipPhoto.classList.remove('flipping');
+        flipPhoto.style.animation = 'none';
+        flipPhoto.offsetHeight;
+        flipPhoto.style.animation = 'glowDropPulse 3s ease-in-out infinite';
+        isFlipping = false; // unlock for next click
+      }, 1200);
+    });
 
-  flipTimeout = setTimeout(() => {
-    flipPhoto.classList.remove('flipping');
-    flipPhoto.style.animation = 'none';
-    flipPhoto.offsetHeight;
-    flipPhoto.style.animation = 'glowDropPulse 3s ease-in-out infinite';
-    spawnGlitter();
-    flipTimeout = null; 
-  }, 1200);
-});
+    // ── Global Click / Touch → Spawn Stars ──
+    // Fires on every click/tap anywhere on the page after reveal
+    function handleInteraction(e) {
+      if (!pageRevealed) return;
 
-    // ── Glitter Explosion ──
-    function spawnGlitter() {
-      const rect    = flipPhoto.getBoundingClientRect();
-      const originX = rect.left + rect.width  / 2;
-      const originY = rect.top  + rect.height / 2;
+      // Use touch coordinates on mobile, mouse on desktop
+      const x = e.touches ? e.touches[0].clientX : e.clientX;
+      const y = e.touches ? e.touches[0].clientY : e.clientY;
 
-      const count = 70;
+      spawnStars(x, y);
+    }
+
+    document.addEventListener('click',      handleInteraction);
+    document.addEventListener('touchstart', handleInteraction, { passive: true });
+
+    // ── Spawn Stars at (x, y) ──
+    function spawnStars(originX, originY) {
+      const count = 18;
 
       for (let i = 0; i < count; i++) {
         const particle = document.createElement('div');
@@ -528,7 +531,7 @@ flipPhoto.addEventListener('click', () => {
 
         const dur   = (Math.random() * 1.0 + 1.2).toFixed(2);
         const rot   = Math.random() * 540 - 270;
-        const delay = (Math.random() * 0.12).toFixed(2);
+        const delay = (Math.random() * 0.1).toFixed(2);
 
         particle.style.cssText = `
           left: ${originX}px;
